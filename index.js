@@ -1,7 +1,13 @@
 import express from "express";
 import { connectDB } from "./config/db.js";
 import cardRoutes from "./routes/cardRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "public")));
 const app = express();
 const PORT = 3000;
 

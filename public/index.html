@@ -1,11 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Card API</title>
+  <title>🃏 Playing Cards API</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      padding: 30px 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    p {
+      opacity: 0.8;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-load {
+      background: #22c55e;
+      color: white;
+    }
+
+    .btn-load:hover {
+      background: #16a34a;
+      transform: scale(1.05);
+    }
+
+    .btn-add {
+      background: #f97316;
+      color: white;
+    }
+
+    .btn-add:hover {
+      background: #ea580c;
+      transform: scale(1.05);
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: white;
+      color: black;
+      width: 120px;
+      height: 160px;
+      border-radius: 12px;
+      margin: 15px;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .value {
+      font-size: 22px;
+    }
+
+    .suit {
+      font-size: 28px;
+    }
+
+    .royal {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-  <h1>🎴 Card API is Running</h1>
-  <p>API Endpoint:</p>
-  <a href="/api/cards">View Cards</a>
+
+<header>
+  <h1>🃏 Playing Cards REST API</h1>
+  <p>Cloud Deployed • MongoDB Atlas • Express Backend</p>
+</header>
+
+<div class="container">
+  <button class="btn-load" onclick="loadCards()">Load Cards</button>
+  <button class="btn-add" onclick="addCard()">Add Royal Card</button>
+
+  <div class="cards" id="cards"></div>
+</div>
+
+<script>
+  const API_URL = "/api/cards";
+
+  function getSuitSymbol(suit) {
+    switch (suit.toLowerCase()) {
+      case "hearts": return "♥";
+      case "spades": return "♠";
+      case "diamonds": return "♦";
+      case "clubs": return "♣";
+      default: return "🃏";
+    }
+  }
+
+  async function loadCards() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const container = document.getElementById("cards");
+    container.innerHTML = "";
+
+    if (data.length === 0) {
+      container.innerHTML = "<p>No cards found.</p>";
+      return;
+    }
+
+    data.forEach(card => {
+      const suitSymbol = getSuitSymbol(card.suit);
+
+      container.innerHTML += `
+        <div class="card">
+          <div class="value">${card.value}</div>
+          <div class="suit">${suitSymbol}</div>
+          <div class="${card.category === 'royal' ? 'royal' : ''}">
+            ${card.category}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  async function addCard() {
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        suit: "Hearts",
+        value: "King",
+        category: "royal"
+      })
+    });
+
+    loadCards();
+  }
+</script>
+
 </body>
 </html>
